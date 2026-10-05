@@ -70,6 +70,21 @@ function loadTasks() {
     })
 }
 
+function update() {
+    $.ajax({
+        type: "PUT",
+        url: "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks/1",
+        data: JSON.stringify({title: "New message"}),
+        contentType: "application/json",
+        success: function(response){
+            console.log(response)
+        },
+        error: function(failure){
+            console.log(failure)
+        }
+    })
+}
+
 function init() {
     console.log("Hello world!");
 
