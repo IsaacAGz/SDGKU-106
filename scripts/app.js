@@ -28,9 +28,36 @@ function saveTask() {
     dsiplayTask(taskToSave);
 }
 
+
+function deleteTask() {
+    console.log("Deleting Task");
+
+    let btn = $(this);
+
+    let taskElement = btn.parents(".task");
+
+    let id = taskElement.attr("id")
+
+    $.ajax({
+        type: "DELETE",
+        url: API + `/${id}`,
+        success: function(deleted){
+            taskElement.fadeOut(500, function() {
+                taskElement.remove();
+            });
+            console.log(deleted);
+        },
+
+        error: function (err) {
+            console.log(err);
+        }
+    });
+    
+}
+
 function dsiplayTask(task){
     let syntax = `
-        <div class="task" style="border-left-color:${task.color}">
+        <div class="task" id="${task.id}" style="border-left-color:${task.color}">
             <div class="info">
                 <h4>${task.title}</h4>
                 <p>${task.description}</p>
@@ -41,7 +68,8 @@ function dsiplayTask(task){
             <div class="date-budget">
                 <label>Due: ${task.due}</label> 
                 <label>Budget: ${task.budget}</label>
-                </div>
+            </div>
+            <button class="btn-delete">Delete</button>
         </div>`;
     
     $(".list").append(syntax);
@@ -85,10 +113,37 @@ function update() {
     })
 }
 
+function filter(status){
+    if(status === "All"){
+        $(".task").show();
+    } else {
+        $(".task").hide();
+    }
+
+    $(".task").each(function() {
+        let taskStatus = $(this).find("status").text();
+
+        if(taskStatus === status) {
+            $(this).show();
+        }
+    });
+}
+
 function init() {
     console.log("Hello world!");
 
     $("#btnSave").click(saveTask);
+    $("#btnAll").click(function () {
+        filter("All");
+    });
+    $("#btnDone").click(function () {
+        filter("Completed");
+    });
+    $("#btnToDo").click(function () {
+        filter("New");
+    });
+
+    $(".list").on("click", ".btn-delete", deleteTask);
 
     loadTasks();
 }
